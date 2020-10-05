@@ -238,8 +238,12 @@ export class AutocompleteComponent implements OnInit, OnChanges, AfterViewInit, 
           // string logic, check equality of strings
           return item.toLowerCase().indexOf(this.query.toLowerCase()) > -1;
         } else if (typeof item === 'object' && item.constructor === Object) {
-          // object logic, check property equality
-          return item[this.searchKeyword].toLowerCase().indexOf(this.query.toLowerCase()) > -1;
+          if (typeof item[this.searchKeyword] != 'string') {
+            return item[this.searchKeyword].toString().toLowerCase().indexOf(this.query.toLowerCase()) > -1;
+          }else{
+            return item[this.searchKeyword].toLowerCase().indexOf(this.query.toLowerCase()) > -1;
+          }
+          
         }
       });
     } else {
