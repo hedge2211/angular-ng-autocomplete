@@ -1,7 +1,7 @@
 <div class="autocomplete-container"
      [ngClass]="{ 'active': isOpen}">
   <div class="input-container">
-    <input #searchInput type="text" placeholder={{placeHolder}}
+    <input #searchInput type="search" placeholder={{placeHolder}}
            [(ngModel)]=query
            (input)="onChange($event)"
            (focus)=handleFocus($event)
