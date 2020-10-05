@@ -1,6 +1,6 @@
 {
   "name": "angular-ng-autocomplete",
-  "version": "2.0.1",
+  "version": "2.1.1",
   "description": "Angular autocomplete",
   "keywords": [
     "angular",
@@ -25,9 +25,9 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/gmerabishvili/angular-autocomplete"
+    "url": "https://github.com/hedge2211/angular-ng-autocomplete"
   },
-  "homepage": "https://gmerabishvili.github.io/angular-ng-autocomplete/",
+  "homepage": "https://github.com/hedge2211/angular-ng-autocomplete",
   "peerDependencies": {
     "@angular/common": "*",
     "@angular/core": "*"
