@@ -68,7 +68,8 @@ export class AutocompleteComponent implements OnInit, OnChanges, AfterViewInit, 
   public overlay = false;
   private manualOpen = undefined;
   private manualClose = undefined;
-
+  private searchString:string = null;
+  private searchTerms: string[] = null;
 
   // @Inputs
   /**
@@ -76,7 +77,7 @@ export class AutocompleteComponent implements OnInit, OnChanges, AfterViewInit, 
    * It can be array of strings or array of objects.
    */
   @Input() public data = [];
-  @Input() public searchKeyword: string; // keyword to filter the list
+  @Input() public searchKeyword: string | string[]; // keyword to filter the list
   @Input() public placeHolder = ''; // input placeholder
   @Input() public heading = '';
   @Input() public initialValue: any; // set initial value
@@ -179,6 +180,11 @@ export class AutocompleteComponent implements OnInit, OnChanges, AfterViewInit, 
 
   ngOnInit() {
     this.setInitialValue(this.initialValue);
+    if (typeof this.searchKeyword == 'string'){
+      this.searchString = this.searchKeyword;
+    }else{
+      this.searchTerms = this.searchKeyword;
+    }
   }
 
   ngAfterViewInit() {
@@ -200,6 +206,11 @@ export class AutocompleteComponent implements OnInit, OnChanges, AfterViewInit, 
    * Update search results
    */
   ngOnChanges(changes: SimpleChanges): void {
+    if (typeof this.searchKeyword == 'string'){
+      this.searchString = this.searchKeyword;
+    }else{
+      this.searchTerms = this.searchKeyword;
+    }
     if (
       changes &&
       changes.data &&
@@ -234,17 +245,21 @@ export class AutocompleteComponent implements OnInit, OnChanges, AfterViewInit, 
     if (this.query != null && this.data) {
       this.toHighlight = this.query;
       this.filteredList = this.data.filter((item: any) => {
+        if (this.searchString!=null){
         if (typeof item === 'string') {
           // string logic, check equality of strings
           return item.toLowerCase().indexOf(this.query.toLowerCase()) > -1;
         } else if (typeof item === 'object' && item.constructor === Object) {
-          if (typeof item[this.searchKeyword] != 'string') {
-            return item[this.searchKeyword].toString().toLowerCase().indexOf(this.query.toLowerCase()) > -1;
+          if (typeof item[this.searchString] != 'string') {
+            return item[this.searchString].toString().toLowerCase().indexOf(this.query.toLowerCase()) > -1;
           }else{
-            return item[this.searchKeyword].toLowerCase().indexOf(this.query.toLowerCase()) > -1;
+            return item[this.searchString].toLowerCase().indexOf(this.query.toLowerCase()) > -1;
           }
           
         }
+      }else if (this.searchTerms != null) {
+        return this.query.toLowerCase().split(" ").every((term)=>this.searchTerms.some((field)=> item[field].toString().toLowerCase().includes(term)));
+      }
       });
     } else {
       this.notFound = false;
@@ -265,7 +280,17 @@ export class AutocompleteComponent implements OnInit, OnChanges, AfterViewInit, 
    * @param item
    */
   public select(item) {
-    this.query = !this.isType(item) ? item[this.searchKeyword] : item;
+    if (this.searchTerms != null){
+      this.query = item.map(temp=>{
+        let text = "";
+        this.searchTerms.forEach((term)=>{
+          text =+ term+ " ";
+        });
+        return text;
+      });
+    }else {
+      this.query = !this.isType(item) ? item[this.searchString] : item;
+    }
     this.isOpen = true;
     this.overlay = false;
     this.selected.emit(item);
@@ -280,7 +305,7 @@ export class AutocompleteComponent implements OnInit, OnChanges, AfterViewInit, 
 
         // check if selected item exists in existingHistory
         if (!existingHistory.some((existingItem) => !this.isType(existingItem)
-          ? existingItem[this.searchKeyword] == item[this.searchKeyword] : existingItem == item)) {
+          ? existingItem[this.searchString] == item[this.searchString] : existingItem == item)) {
           existingHistory.unshift(item);
           localStorage.setItem(`${this.historyIdentifier}`, JSON.stringify(existingHistory));
 
@@ -294,7 +319,7 @@ export class AutocompleteComponent implements OnInit, OnChanges, AfterViewInit, 
           if (!this.isType(item)) {
             // object logic
             const copiedExistingHistory = existingHistory.slice(); // copy original existingHistory array
-            const selectedIndex = copiedExistingHistory.map((el) => el[this.searchKeyword]).indexOf(item[this.searchKeyword]);
+            const selectedIndex = copiedExistingHistory.map((el) => el[this.searchString]).indexOf(item[this.searchString]);
             copiedExistingHistory.splice(selectedIndex, 1);
             copiedExistingHistory.splice(0, 0, item);
             localStorage.setItem(`${this.historyIdentifier}`, JSON.stringify(copiedExistingHistory));
@@ -708,7 +733,7 @@ export class AutocompleteComponent implements OnInit, OnChanges, AfterViewInit, 
       if (!this.historyList.length || !this.isHistoryListVisible) {
         // filteredList
         this.query = !this.isType(this.filteredList[this.selectedIdx])
-          ? this.filteredList[this.selectedIdx][this.searchKeyword]
+          ? this.filteredList[this.selectedIdx][this.searchString]
           : this.filteredList[this.selectedIdx];
 
         this.saveHistory(this.filteredList[this.selectedIdx]);
@@ -716,7 +741,7 @@ export class AutocompleteComponent implements OnInit, OnChanges, AfterViewInit, 
       } else {
         // historyList
         this.query = !this.isType(this.historyList[this.selectedIdx])
-          ? this.historyList[this.selectedIdx][this.searchKeyword]
+          ? this.historyList[this.selectedIdx][this.searchString]
           : this.historyList[this.selectedIdx];
         this.saveHistory(this.historyList[this.selectedIdx]);
         this.select(this.historyList[this.selectedIdx]);
@@ -759,7 +784,7 @@ export class AutocompleteComponent implements OnInit, OnChanges, AfterViewInit, 
     if (this.historyIdentifier) {
       // check if selected item exists in historyList
       if (!this.historyList.some((item) => !this.isType(item)
-        ? item[this.searchKeyword] == selected[this.searchKeyword] : item == selected)) {
+        ? item[this.searchString] == selected[this.searchString] : item == selected)) {
         this.saveHistoryToLocalStorage([selected, ...this.historyList]);
 
         // check if items don't exceed max allowed number
@@ -772,7 +797,7 @@ export class AutocompleteComponent implements OnInit, OnChanges, AfterViewInit, 
         if (!this.isType(selected)) {
           // object logic
           const copiedHistoryList = this.historyList.slice(); // copy original historyList array
-          const selectedIndex = copiedHistoryList.map((item) => item[this.searchKeyword]).indexOf(selected[this.searchKeyword]);
+          const selectedIndex = copiedHistoryList.map((item) => item[this.searchString]).indexOf(selected[this.searchString]);
           copiedHistoryList.splice(selectedIndex, 1);
           copiedHistoryList.splice(0, 0, selected);
           this.saveHistoryToLocalStorage([...copiedHistoryList]);
