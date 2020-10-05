@@ -14,7 +14,7 @@
     <div class="ng-autocomplete">
       <ng-autocomplete #ngAutoCompleteStatic
                        [data]="countries"
-                       [searchKeyword]="keyword"
+                       [searchKeyword]="['id','name']"
                        [initialValue]=""
                        [placeHolder]="placeholder"
                        (selected)='selectEvent($event)'
@@ -34,7 +34,7 @@
       </ng-autocomplete>
 
       <ng-template #itemTemplateStatic let-item>
-        <a [innerHTML]="item"></a>
+        <a [innerHTML]="item.name"></a>
       </ng-template>
 
       <ng-template #notFoundTemplate let-notFound>

@@ -27,15 +27,17 @@ export class HomeComponent implements OnInit {
    * Static Data
    */
 
-  public countries = ['Albania', 'Andorra', 'Armenia', 'Austria', 'Azerbaijan', 'Belarus',
-    'Belgium'];
+  // public countries = ['Albania', 'Andorra', 'Armenia', 'Austria', 'Azerbaijan', 'Belarus',
+  //   'Belgium'];
 
   public test = ['Lithuania', 'Luxembourg', 'Macedonia', 'Malta',
     'Moldova', 'Monaco', 'Montenegro', 'Netherlands', 'Norway', 'Poland',
     'Portugal', 'Romania', 'Russia', 'San Marino', 'Serbia', 'Slovakia', 'Slovenia',
     'Spain', 'Sweden', 'Switzerland', 'Turkey', 'Ukraine', 'United Kingdom', 'Vatican City'];
 
-  /*
+
+    
+  
     public countries = [
       {
         id: 1,
@@ -98,7 +100,7 @@ export class HomeComponent implements OnInit {
         population: 200
       }
     ];
-  */
+  
 
   constructor(private _dataService: DataService) {
   }
@@ -147,7 +149,7 @@ export class HomeComponent implements OnInit {
 
   scrollToEndStatic() {
     console.log('scrolled-to-bottom');
-    this.countries = [...this.countries, ...this.test];
+    // this.countries = [...this.countries, ...this.test];
     //console.log('countriesssss', this.countries);
   }
 
