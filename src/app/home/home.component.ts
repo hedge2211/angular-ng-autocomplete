@@ -22,6 +22,7 @@ export class HomeComponent implements OnInit {
     name: 'Georgia',
     population: 200
   };
+  staticResult:any;
 
   /**
    * Static Data
@@ -127,6 +128,7 @@ export class HomeComponent implements OnInit {
 
   selectEvent(item) {
     console.log('Selected item', item);
+    this.staticResult = item;
   }
 
   /**
