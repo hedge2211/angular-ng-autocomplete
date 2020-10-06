@@ -1,7 +1,7 @@
 <div class="autocomplete-container"
      [ngClass]="{ 'active': isOpen}">
   <div class="input-container">
-    <input #searchInput type="search" placeholder={{placeHolder}}
+    <input #searchInput type="text" placeholder={{placeHolder}}
            [(ngModel)]=query
            (input)="onChange($event)"
            (focus)=handleFocus($event)
@@ -87,7 +87,7 @@
   </div>
 
   <!--Not found-->
-  <div class="not-found" *ngIf="isLoading ? !isLoading && notFound : notFound">
+  <div class="not-found" *ngIf="isLoading ? !isLoading && notFound : notFound" (click)="handleNotFoundSelect()">
     <ng-container
       *ngTemplateOutlet="notFoundTemplate;  context: { $implicit: notFoundText  }">
     </ng-container>

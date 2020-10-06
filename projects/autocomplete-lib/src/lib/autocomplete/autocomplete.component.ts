@@ -108,6 +108,9 @@ export class AutocompleteComponent implements OnInit, OnChanges, AfterViewInit, 
   /** Event that is emitted whenever an item from the list is selected. */
   @Output() selected = new EventEmitter<any>();
 
+  /** Event that is emitted whenever an item not from the list is selected. */
+  @Output() notFoundSelected = new EventEmitter<any>();
+
   /** Event that is emitted whenever an input is changed. */
   @Output() inputChanged = new EventEmitter<any>();
 
@@ -281,13 +284,10 @@ export class AutocompleteComponent implements OnInit, OnChanges, AfterViewInit, 
    */
   public select(item) {
     if (this.searchTerms != null){
-      this.query = item.map(temp=>{
-        let text = "";
+        this.query = "";
         this.searchTerms.forEach((term)=>{
-          text =+ term+ " ";
+          this.query = this.query + item[term].toString()+ " ";
         });
-        return text;
-      });
     }else {
       this.query = !this.isType(item) ? item[this.searchString] : item;
     }
@@ -447,12 +447,13 @@ export class AutocompleteComponent implements OnInit, OnChanges, AfterViewInit, 
   /**
    * Remove search query
    */
-  public remove(e) {
-    e.stopPropagation();
+  public remove(e?) {
+    if (e)
+      e.stopPropagation();
     this.query = '';
     this.inputCleared.emit();
     this.propagateChange(this.query);
-    this.setPanelState(e);
+    this.setPanelState(null);
   }
 
   /**
@@ -513,6 +514,10 @@ export class AutocompleteComponent implements OnInit, OnChanges, AfterViewInit, 
       this.setPanelState(event);
     }
     this.isFocused = true;
+  }
+
+  handleNotFoundSelect(){
+    this.notFoundSelected.emit(this.query);
   }
 
   scrollToEnd(): void {
@@ -593,7 +598,7 @@ export class AutocompleteComponent implements OnInit, OnChanges, AfterViewInit, 
       filter(e => isESC(e.keyCode),
         debounceTime(100))
     ).subscribe(e => {
-      this.onEsc();
+      this.onEsc(e);
     });
 
     // TAB
@@ -746,6 +751,12 @@ export class AutocompleteComponent implements OnInit, OnChanges, AfterViewInit, 
         this.saveHistory(this.historyList[this.selectedIdx]);
         this.select(this.historyList[this.selectedIdx]);
       }
+    }else{
+      if (this.filteredList.length>0){
+        this.select(this.filteredList[0]);
+      }else{
+        this.notFoundSelected.emit(this.query);
+      }
     }
     this.isHistoryListVisible = false;
     this.handleClose();
@@ -754,8 +765,10 @@ export class AutocompleteComponent implements OnInit, OnChanges, AfterViewInit, 
   /**
    * Esc click
    */
-  onEsc() {
+  onEsc(e) {
     this.searchInput.nativeElement.blur();
+    if (e)
+      this.remove(e);
     this.handleClose();
   }
 
