@@ -99,6 +99,11 @@ export class HomeComponent implements OnInit {
         id: 12,
         name: 'Switzerland',
         population: 200
+      },
+      {
+        id: 13,
+        name: null,
+        population: 0
       }
     ];
   

@@ -81,6 +81,7 @@ export class AutocompleteComponent implements OnInit, OnChanges, AfterViewInit, 
   @Input() public placeHolder = ''; // input placeholder
   @Input() public heading = '';
   @Input() public initialValue: any; // set initial value
+  @Input() public inputClass:string;
   /**
    * History identifier of history list
    * When valid history identifier is given, then component stores selected item to local storage of user's browser.
@@ -261,7 +262,7 @@ export class AutocompleteComponent implements OnInit, OnChanges, AfterViewInit, 
           
         }
       }else if (this.searchTerms != null) {
-        return this.query.toLowerCase().split(" ").every((term)=>this.searchTerms.some((field)=> item[field].toString().toLowerCase().includes(term)));
+        return this.query.toLowerCase().split(" ").every((term)=>this.searchTerms.filter((field)=> item[field]!=null).some((field)=> item[field].toString().toLowerCase().includes(term)));
       }
       });
     } else {
@@ -285,7 +286,7 @@ export class AutocompleteComponent implements OnInit, OnChanges, AfterViewInit, 
   public select(item) {
     if (this.searchTerms != null){
         this.query = "";
-        this.searchTerms.forEach((term)=>{
+        this.searchTerms.filter((field)=>item[field]!=null).forEach((term)=>{
           this.query = this.query + item[term].toString()+ " ";
         });
     }else {

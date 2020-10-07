@@ -1,11 +1,11 @@
 <div class="autocomplete-container"
-     [ngClass]="{ 'active': isOpen}">
+     [ngClass]="{ 'active': isOpen ,'default-style':inputClass==null}">
   <div class="input-container">
     <input #searchInput type="text" placeholder={{placeHolder}}
            [(ngModel)]=query
            (input)="onChange($event)"
            (focus)=handleFocus($event)
-           [disabled]="disabled">
+           [disabled]="disabled" [class]="inputClass">
     <div class="x" *ngIf="query && !isLoading && !disabled" (click)="remove($event)">
       <i class="material-icons">close</i>
     </div>

@@ -86,6 +86,43 @@
     </div>
   </div>
 </div>
+
+<div >
+  <h2>Custom Style</h2>
+  <div class="ng-autocomplete" style="width: 25%;">
+    <ng-autocomplete #ngAutoCompleteStatic inputClass="form-control form-control-sm"
+                     [data]="countries"
+                     [searchKeyword]="['id','name']"
+                     [initialValue]=""
+                     [placeHolder]="placeholder"
+                     (selected)='selectEvent($event)'
+                     (notFoundSelected)='selectEvent($event)'
+                     (inputChanged)='changeEventStatic($event)'
+                     (inputFocused)='focusEventStatic($event)'
+                     (inputCleared)='clearEventStatic()'
+                     (scrolledToEnd)='scrollToEndStatic()'
+                     (opened)="openedStatic()"
+                     (closed)="closedStatic()"
+                     historyIdentifier="countryList"
+                     [historyHeading]="historyHeading"
+                     historyListMaxNumber="15"
+                     notFoundText="Add New Entry"
+                     minQueryLength="1"
+                     [itemTemplate]="itemTemplateStatic"
+                     [notFoundTemplate]="notFoundTemplate">
+    </ng-autocomplete>
+
+    <ng-template #itemTemplateStatic let-item>
+      <a [innerHTML]="item.name"></a>
+    </ng-template>
+
+    <ng-template #notFoundTemplate let-notFound>
+      <div [innerHTML]="notFound"></div>
+    </ng-template>
+  </div>
+</div>
+
+
 <div *ngIf="staticResult">
   <h3>Result</h3>
   {{staticResult|json}}

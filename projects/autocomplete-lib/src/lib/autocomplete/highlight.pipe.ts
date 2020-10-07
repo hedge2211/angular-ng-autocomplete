@@ -24,7 +24,7 @@ export class HighlightPipe implements PipeTransform {
       return text2;
     } if (searchKeyword && typeof searchKeyword == 'object') {
       const text2 = { ...text };
-      searchKeyword.forEach((field) => {
+      searchKeyword.filter((field)=>text[field]!=null).forEach((field) => {
         const name = text[field].toString().replace(regex, (match) => `<b>${match}</b>`);
         text2[field] = name;
       });
